@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
-import { cancelOrder } from '../src/orders.js';
+import { cancelOrder, decideCancellation } from '../src/orders.js';
+
+const HOUR_MS = 60 * 60 * 1000;
 
 const DB = './data/orders.json';
 
@@ -34,6 +36,49 @@ function oldOrder(overrides = {}) {
   const twoDaysAgo = new Date(Date.now() - 49 * 60 * 60 * 1000).toISOString();
   return freshOrder({ placedAt: twoDaysAgo, ...overrides });
 }
+
+// ── functional core: decideCancellation (pure, no I/O, no mocks) ───────────────
+
+test('decideCancellation approves a fresh order and stamps cancelledAt', () => {
+  const now = Date.parse('2024-01-01T12:00:00.000Z');
+  const order = freshOrder({ placedAt: '2024-01-01T06:00:00.000Z' });
+
+  const decision = decideCancellation(order, now);
+
+  assert.equal(decision.ok, true);
+  assert.equal(decision.order.status, 'cancelled');
+  assert.equal(decision.order.cancelledAt, '2024-01-01T12:00:00.000Z');
+});
+
+test('decideCancellation refuses an order older than 24 hours', () => {
+  const placedAt = '2024-01-01T00:00:00.000Z';
+  const now = Date.parse(placedAt) + 25 * HOUR_MS;
+
+  const decision = decideCancellation(freshOrder({ placedAt }), now);
+
+  assert.deepEqual(decision, { ok: false, reason: 'too_late' });
+});
+
+test('decideCancellation refuses an already-cancelled order', () => {
+  const decision = decideCancellation(freshOrder({ status: 'cancelled' }), Date.now());
+
+  assert.deepEqual(decision, { ok: false, reason: 'already_cancelled' });
+});
+
+test('decideCancellation refuses a shipped order', () => {
+  const decision = decideCancellation(freshOrder({ status: 'shipped' }), Date.now());
+
+  assert.deepEqual(decision, { ok: false, reason: 'already_shipped' });
+});
+
+test('decideCancellation does not mutate its input order', () => {
+  const order = freshOrder();
+  const before = JSON.stringify(order);
+
+  decideCancellation(order, Date.now());
+
+  assert.equal(JSON.stringify(order), before);
+});
 
 // ── tests ─────────────────────────────────────────────────────────────────────
 

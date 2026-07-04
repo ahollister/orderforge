@@ -31,10 +31,12 @@ export async function processOrder(input) {
   return order;
 }
 
-export async function cancelOrder(orderId) {
-  const order = loadOrder(orderId);
-  if (!order) throw new Error(`order ${orderId} not found`);
+// ── functional core ───────────────────────────────────────────────────────────
 
+// Pure decision: given an order and the current time (ms since epoch), decide
+// whether it can be cancelled. Returns either a refusal with a reason, or an
+// approval carrying the updated order. No I/O, no clock, no mutation.
+export function decideCancellation(order, nowMs) {
   if (order.status === 'cancelled') {
     return { ok: false, reason: 'already_cancelled' };
   }
@@ -42,20 +44,33 @@ export async function cancelOrder(orderId) {
     return { ok: false, reason: 'already_shipped' };
   }
 
-  const ageMs = Date.now() - new Date(order.placedAt).getTime();
+  const ageMs = nowMs - new Date(order.placedAt).getTime();
   if (ageMs > CANCELLABLE_WINDOW_MS) {
     return { ok: false, reason: 'too_late' };
   }
 
-  const cancelled = {
-    ...order,
-    status: 'cancelled',
-    cancelledAt: new Date().toISOString(),
+  return {
+    ok: true,
+    order: {
+      ...order,
+      status: 'cancelled',
+      cancelledAt: new Date(nowMs).toISOString(),
+    },
   };
+}
 
-  updateOrder(cancelled);
-  await notifyOrderCancelled(cancelled);
-  return { ok: true, order: cancelled };
+// ── imperative shell ──────────────────────────────────────────────────────────
+
+export async function cancelOrder(orderId) {
+  const order = loadOrder(orderId);
+  if (!order) throw new Error(`order ${orderId} not found`);
+
+  const decision = decideCancellation(order, Date.now());
+  if (!decision.ok) return decision;
+
+  updateOrder(decision.order);
+  await notifyOrderCancelled(decision.order);
+  return decision;
 }
 
 export function isEligibleForFreeShip(order) {
