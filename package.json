@@ -1,0 +1,10 @@
+{
+  "name": "orderforge",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Tiny order-processing example app (deliberately violates functional-core/imperative-shell in places) for testing architectural refactors.",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  }
+}
