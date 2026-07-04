@@ -32,7 +32,8 @@ export async function processOrder(input) {
   return order;
 }
 
-export function isEligibleForFreeShip(order) {
-  const config = JSON.parse(readFileSync('./config/shipping.json', 'utf8'));
-  return order.totalCents >= config.freeShipThresholdCents;
+// Functional core: pure predicate. The free-shipping threshold is supplied by
+// the shell rather than read from disk here.
+export function isEligibleForFreeShip(order, freeShipThresholdCents) {
+  return order.totalCents >= freeShipThresholdCents;
 }

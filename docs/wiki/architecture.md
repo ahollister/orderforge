@@ -10,9 +10,12 @@ lives in a thin orchestrating shell.
 - **Core (pure):** `src/pricing.js` `computeTotal(order, taxRate)` - sums lines,
   applies the tax rate, returns totals plus `logLines` events; no I/O.
   `src/discounts.js` `percentOff` / `bestDiscount` - pure calculations over
-  supplied coupon values.
+  supplied coupon values. `src/orders.js` `isEligibleForFreeShip(order,
+  freeShipThresholdCents)` - pure predicate over a supplied threshold; no I/O.
 - **Shell (effects):** `src/orders.js` `processOrder` gathers config (coupons,
   tax rate), calls the core, emits its log lines, then persists and notifies.
+  `index.js` reads the shipping config and passes the threshold to
+  `isEligibleForFreeShip`.
   `src/storage.js` (file DB) and `src/notify.js` (console) are effectful glue by
   design.
 
@@ -20,6 +23,6 @@ lives in a thin orchestrating shell.
 
 - `processOrder` still mixes validation, config reads, the clock (`new Date`),
   persistence, and notification in one body - a pure `decideOrder(...)` could be
-  extracted.
-- `isEligibleForFreeShip(order)` reads `config/shipping.json` itself; it should
-  become a pure predicate taking the threshold as an argument.
+  extracted. In particular the order assembly (building the order object and
+  computing `totalCents - discountCents`) is pure logic still inline in the
+  shell.
