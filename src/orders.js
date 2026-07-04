@@ -10,7 +10,11 @@ export async function processOrder(input) {
   }
 
   const coupons = JSON.parse(readFileSync('./config/coupons.json', 'utf8'));
-  const { subtotalCents, taxCents, totalCents } = computeTotal(input);
+  const { rate } = JSON.parse(readFileSync('./config/tax.json', 'utf8'));
+
+  const { subtotalCents, taxCents, totalCents, logLines } = computeTotal(input, rate);
+  for (const line of logLines) console.log(line);
+
   const discountCents = bestDiscount(totalCents, coupons);
 
   const order = {
