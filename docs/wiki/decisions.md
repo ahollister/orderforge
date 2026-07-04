@@ -2,6 +2,28 @@
 
 Append-only log of significant project decisions. Each entry should record what was decided, why, and (where useful) what was rejected.
 
+## 2026-07-04 - Order preparation extracted as a pure functional core
+
+**Decided:** `prepareOrder(input, taxRate, coupons, placedAt)` in
+`src/orders.js` is a new pure function that validates the input, prices it
+(`computeTotal`), picks the best discount (`bestDiscount`), and assembles the
+order (`buildOrder`), returning `{ order, logLines }`. `processOrder` is now a
+thin shell: it reads the coupon and tax config, captures the clock
+(`new Date().toISOString()`), calls `prepareOrder`, then emits the log lines,
+persists, and notifies.
+
+**Why:** Aligns with the functional-core / imperative-shell stance. The
+validation decision and the pricing → discount → assembly orchestration were
+inline in the shell, tangled with reads, the clock, logging, persistence, and
+notification. Consolidating them into one pure core makes the whole
+order-preparation rule unit-testable with plain values (see
+`test/orders.test.js`, no mocks or I/O) and leaves `processOrder` reading as
+"gather, call core, act".
+
+**Rejected:** Leaving validation and assembly inline in `processOrder` (a
+function that both decides and acts); passing config paths into the core instead
+of values (would reintroduce I/O into the core).
+
 ## 2026-07-04 - Free-shipping eligibility made a pure predicate
 
 **Decided:** `isEligibleForFreeShip(order, freeShipThresholdCents)` in
