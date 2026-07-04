@@ -17,19 +17,26 @@ export async function processOrder(input) {
 
   const discountCents = bestDiscount(totalCents, coupons);
 
-  const order = {
-    id: input.id,
-    lines: input.lines,
-    subtotalCents,
-    taxCents,
-    discountCents,
-    totalCents: totalCents - discountCents,
-    placedAt: new Date().toISOString(),
-  };
+  const order = buildOrder(input, { subtotalCents, taxCents, totalCents }, discountCents, new Date().toISOString());
 
   saveOrder(order);
   await notifyOrderPlaced(order);
   return order;
+}
+
+// Functional core: pure order assembly. Takes the priced amounts, the chosen
+// discount, and the placed-at timestamp as values, and returns the order shape
+// with the net total computed. No I/O or clock access here.
+export function buildOrder(input, priced, discountCents, placedAt) {
+  return {
+    id: input.id,
+    lines: input.lines,
+    subtotalCents: priced.subtotalCents,
+    taxCents: priced.taxCents,
+    discountCents,
+    totalCents: priced.totalCents - discountCents,
+    placedAt,
+  };
 }
 
 // Functional core: pure predicate. The free-shipping threshold is supplied by
