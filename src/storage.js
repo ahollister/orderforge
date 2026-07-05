@@ -14,3 +14,17 @@ export function saveOrder(order) {
   orders.push(order);
   writeFileSync(DB, JSON.stringify(orders, null, 2));
 }
+
+export function loadOrder(id) {
+  const orders = loadOrders();
+  return orders.find((o) => o.id === id) ?? null;
+}
+
+export function updateOrder(updated) {
+  mkdirSync(dirname(DB), { recursive: true });
+  const orders = loadOrders();
+  const idx = orders.findIndex((o) => o.id === updated.id);
+  if (idx === -1) throw new Error(`order ${updated.id} not found`);
+  orders[idx] = updated;
+  writeFileSync(DB, JSON.stringify(orders, null, 2));
+}
