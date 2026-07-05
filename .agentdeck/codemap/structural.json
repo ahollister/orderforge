@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "index.js",
+      "language": "javascript",
+      "loc": 14,
+      "symbols": [],
+      "imports": [
+        {
+          "raw": "./src/orders.js",
+          "resolved": "src/orders.js",
+          "external": false,
+          "names": [
+            "processOrder",
+            "isEligibleForFreeShip"
+          ]
+        }
+      ],
+      "importedBy": []
+    },
+    {
+      "path": "src/discounts.js",
+      "language": "javascript",
+      "loc": 14,
+      "symbols": [
+        {
+          "name": "percentOff",
+          "kind": "function",
+          "exported": true,
+          "line": 1
+        },
+        {
+          "name": "bestDiscount",
+          "kind": "function",
+          "exported": true,
+          "line": 8
+        }
+      ],
+      "imports": [],
+      "importedBy": [
+        "src/orders.js",
+        "test/discounts.test.js"
+      ]
+    },
+    {
+      "path": "src/notify.js",
+      "language": "javascript",
+      "loc": 4,
+      "symbols": [
+        {
+          "name": "notifyOrderPlaced",
+          "kind": "function",
+          "exported": true,
+          "line": 1
+        }
+      ],
+      "imports": [],
+      "importedBy": [
+        "src/orders.js"
+      ]
+    },
+    {
+      "path": "src/orders.js",
+      "language": "javascript",
+      "loc": 35,
+      "symbols": [
+        {
+          "name": "processOrder",
+          "kind": "function",
+          "exported": true,
+          "line": 7
+        },
+        {
+          "name": "isEligibleForFreeShip",
+          "kind": "function",
+          "exported": true,
+          "line": 31
+        }
+      ],
+      "imports": [
+        {
+          "raw": "node:fs",
+          "resolved": null,
+          "external": true,
+          "names": [
+            "readFileSync"
+          ]
+        },
+        {
+          "raw": "./pricing.js",
+          "resolved": "src/pricing.js",
+          "external": false,
+          "names": [
+            "computeTotal"
+          ]
+        },
+        {
+          "raw": "./storage.js",
+          "resolved": "src/storage.js",
+          "external": false,
+          "names": [
+            "saveOrder"
+          ]
+        },
+        {
+          "raw": "./notify.js",
+          "resolved": "src/notify.js",
+          "external": false,
+          "names": [
+            "notifyOrderPlaced"
+          ]
+        },
+        {
+          "raw": "./discounts.js",
+          "resolved": "src/discounts.js",
+          "external": false,
+          "names": [
+            "bestDiscount"
+          ]
+        }
+      ],
+      "importedBy": [
+        "index.js"
+      ]
+    },
+    {
+      "path": "src/pricing.js",
+      "language": "javascript",
+      "loc": 22,
+      "symbols": [
+        {
+          "name": "computeTotal",
+          "kind": "function",
+          "exported": true,
+          "line": 3
+        }
+      ],
+      "imports": [
+        {
+          "raw": "node:fs",
+          "resolved": null,
+          "external": true,
+          "names": [
+            "readFileSync"
+          ]
+        }
+      ],
+      "importedBy": [
+        "src/orders.js"
+      ]
+    },
+    {
+      "path": "src/storage.js",
+      "language": "javascript",
+      "loc": 17,
+      "symbols": [
+        {
+          "name": "loadOrders",
+          "kind": "function",
+          "exported": true,
+          "line": 6
+        },
+        {
+          "name": "saveOrder",
+          "kind": "function",
+          "exported": true,
+          "line": 11
+        }
+      ],
+      "imports": [
+        {
+          "raw": "node:fs",
+          "resolved": null,
+          "external": true,
+          "names": [
+            "readFileSync",
+            "writeFileSync",
+            "existsSync",
+            "mkdirSync"
+          ]
+        },
+        {
+          "raw": "node:path",
+          "resolved": null,
+          "external": true,
+          "names": [
+            "dirname"
+          ]
+        }
+      ],
+      "importedBy": [
+        "src/orders.js"
+      ]
+    },
+    {
+      "path": "test/discounts.test.js",
+      "language": "javascript",
+      "loc": 18,
+      "symbols": [],
+      "imports": [
+        {
+          "raw": "node:test",
+          "resolved": null,
+          "external": true,
+          "names": [
+            "test"
+          ]
+        },
+        {
+          "raw": "node:assert/strict",
+          "resolved": null,
+          "external": true,
+          "names": [
+            "assert"
+          ]
+        },
+        {
+          "raw": "../src/discounts.js",
+          "resolved": "src/discounts.js",
+          "external": false,
+          "names": [
+            "percentOff",
+            "bestDiscount"
+          ]
+        }
+      ],
+      "importedBy": []
+    }
+  ],
+  "rankings": {
+    "topFanIn": [
+      {
+        "path": "src/discounts.js",
+        "count": 2
+      },
+      {
+        "path": "src/notify.js",
+        "count": 1
+      },
+      {
+        "path": "src/orders.js",
+        "count": 1
+      },
+      {
+        "path": "src/pricing.js",
+        "count": 1
+      },
+      {
+        "path": "src/storage.js",
+        "count": 1
+      }
+    ],
+    "topFanOut": [
+      {
+        "path": "src/orders.js",
+        "count": 4
+      },
+      {
+        "path": "index.js",
+        "count": 1
+      },
+      {
+        "path": "test/discounts.test.js",
+        "count": 1
+      }
+    ],
+    "topByExports": [
+      {
+        "path": "src/discounts.js",
+        "count": 2
+      },
+      {
+        "path": "src/orders.js",
+        "count": 2
+      },
+      {
+        "path": "src/storage.js",
+        "count": 2
+      },
+      {
+        "path": "src/notify.js",
+        "count": 1
+      },
+      {
+        "path": "src/pricing.js",
+        "count": 1
+      }
+    ],
+    "topByLoc": [
+      {
+        "path": "src/orders.js",
+        "loc": 35
+      },
+      {
+        "path": "src/pricing.js",
+        "loc": 22
+      },
+      {
+        "path": "test/discounts.test.js",
+        "loc": 18
+      },
+      {
+        "path": "src/storage.js",
+        "loc": 17
+      },
+      {
+        "path": "index.js",
+        "loc": 14
+      },
+      {
+        "path": "src/discounts.js",
+        "loc": 14
+      },
+      {
+        "path": "src/notify.js",
+        "loc": 4
+      }
+    ]
+  },
+  "symbolIndex": {
+    "percentOff": [
+      "src/discounts.js:1"
+    ],
+    "bestDiscount": [
+      "src/discounts.js:8"
+    ],
+    "notifyOrderPlaced": [
+      "src/notify.js:1"
+    ],
+    "processOrder": [
+      "src/orders.js:7"
+    ],
+    "isEligibleForFreeShip": [
+      "src/orders.js:31"
+    ],
+    "computeTotal": [
+      "src/pricing.js:3"
+    ],
+    "loadOrders": [
+      "src/storage.js:6"
+    ],
+    "saveOrder": [
+      "src/storage.js:11"
+    ]
+  }
+}
